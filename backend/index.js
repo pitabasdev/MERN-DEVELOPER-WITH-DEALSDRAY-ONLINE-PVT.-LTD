@@ -5,7 +5,27 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
+const Routes=require('./routes/Routes')
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.use(bodyParser.json())
+app.use(cookieParser())
+app.use(Routes)
+app.use(
+    cors({
+        origin: ["http://localhost:3000", "http://127.0.0.1:5500","http://127.0.0.1:5501"],
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        credentials: true,
+        allowedHeaders: ["Origin", "Content-Type", "Authorization", "X-Requested-With"]
+    })
+)
+mongoose.connect(process.env.DB_URL)
+.then(()=>{
+    console.log("Connected to MongoDB");
+})
+.catch((error)=>{
+    console.error("Error connecting to MongoDB:", error);
+    process.exit(1);
+})
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
 });
