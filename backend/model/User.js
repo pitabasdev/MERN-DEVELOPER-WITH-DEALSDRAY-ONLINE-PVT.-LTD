@@ -1,22 +1,17 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true,
-    validate:{
-      validator: function(value) {
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: function (value) {
         return /^[a-zA-Z0-9]+$/.test(value);
       },
-      message: "Username must only contain alphanumeric characters."
-    }
-   },
-  email: { type: String, required: true, unique: true,
-    validate:{
-      validator: function(value) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-      },
-      message: "Invalid email format."
-    }
-   },
+      message: "Username must only contain alphanumeric characters.",
+    },
+  },
   password: { type: String, required: true, minlength: 8 },
 });
 
