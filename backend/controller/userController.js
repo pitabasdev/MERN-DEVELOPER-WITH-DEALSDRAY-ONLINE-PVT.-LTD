@@ -3,6 +3,8 @@ const User = require("../model/User");
 const Employee = require("../model/Employee");
 const upload = require("./multerConfig");
 const bcrypt=require('bcrypt')
+const jwt=require('jsonwebtoken')
+require('dotenv').config()
 
 const signUp = async (req, res) => {
   try {
@@ -27,14 +29,23 @@ const signIn = async (req, res) => {
     try {
       const { username, password } = req.body;
       const user = await User.findOne({ username });
+      
       if (!user) {
         return res.status(400).json({ error: { message: "Invalid username or password." } });
       }
+  
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).json({ error: { message: "Invalid username or password." } });
       }
-  
+      const tokenExist = req.cookies.token;
+      if (tokenExist) {
+        return res.status(400).json({ message: "You are already logged in" });
+      }
+
+      const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
+      console.log(token)
+      res.cookie("token", token, { httpOnly: true, maxAge: 3600000 }); 
       res.status(200).json({ message: "Login successful", user });
     } catch (error) {
       console.error("Error during login:", error);
