@@ -1,8 +1,10 @@
-const express=require('express')
-const router=express.Router()
+const express = require("express");
+const { signUp, createEmployee } = require("../controller/userController");
+const router = express.Router();
+const upload = require('../controller/multerConfig');
 
-router.get("/",(req,res)=>{
-    res.json({message:"Hello from API"})
-})
 
-module.exports=router
+router.post("/register", signUp);
+router.post('/createEmployee', upload.single('f_Image'), createEmployee);
+
+module.exports = router;
